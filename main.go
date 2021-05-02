@@ -5,7 +5,7 @@
 package main
 
 import (
-	"log"
+	"fmt"
 	"os"
 	"path/filepath"
 	"text/template"
@@ -19,7 +19,7 @@ const (
 	defaultformat    = "{{.Context}}" + defaultSepalater + "{{.Namespace}}"
 )
 
-type currentContext struct {
+type kubeContext struct {
 	Context   string
 	Namespace string
 }
@@ -31,10 +31,10 @@ func main() {
 
 	config, err := kubeConfig.RawConfig()
 	if err != nil {
-		os.Exit(1)
+		fmt.Fprintln(os.Stdout, "could not get kubeconfig")
 	}
 	if len(config.Contexts) == 0 {
-		log.Fatal("empty context in kubeconfig")
+		fmt.Fprintln(os.Stdout, "kubeconfig is empty context")
 	}
 
 	curCtx := config.CurrentContext
@@ -48,9 +48,9 @@ func main() {
 		format = os.Args[1]
 	}
 
-	cctx := currentContext{
+	kctx := kubeContext{
 		Context:   curCtx,
 		Namespace: curNs,
 	}
-	template.Must(template.New("tmux").Parse(format)).Execute(os.Stdout, cctx)
+	template.Must(template.New("kube-tmux").Parse(format)).Execute(os.Stdout, kctx)
 }

@@ -7,7 +7,6 @@ package main
 import (
 	"fmt"
 	"os"
-	"path/filepath"
 	"text/template"
 
 	corev1 "k8s.io/api/core/v1"
@@ -15,7 +14,7 @@ import (
 )
 
 const (
-	defaultSepalater = string(filepath.Separator)
+	defaultSepalater = "/"
 	defaultformat    = "{{.Context}}" + defaultSepalater + "{{.Namespace}}"
 )
 

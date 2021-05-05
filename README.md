@@ -46,7 +46,7 @@ $ kube-tmux -separator=':' -ctxFg='blue' -sepFg 'colour250' -nsFg 'default'
 - `go version`
   - `go version devel go1.17-543e098320 Wed May 5 19:17:46 2021 +0000 X:staticlockranking darwin/amd64`
 - tmux `default-shell` is `/bin/sh`.
-- On darwin, `"echo 3 > /proc/sys/vm/drop_caches"` similar command is `"sync && sudo purge"`
+- On darwin, `echo 3 > /proc/sys/vm/drop_caches` similar command is `sync && sudo purge`
 
 ### Result
 

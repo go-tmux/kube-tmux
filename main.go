@@ -5,6 +5,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
 	"text/template"
@@ -25,7 +26,29 @@ type kubeContext struct {
 	Namespace string
 }
 
+var (
+	ctxFg     string
+	ctxBg     string
+	sepFg     string
+	sepBg     string
+	nsFg      string
+	nsBg      string
+	separator string
+)
+
+func init() {
+	flag.StringVar(&ctxFg, "ctxFg", "", "Context foreground colour")
+	flag.StringVar(&ctxBg, "ctxBg", "", "Context background colour")
+	flag.StringVar(&sepFg, "sepFg", "", "Separator foreground colour")
+	flag.StringVar(&sepBg, "sepBg", "", "Separator background colour")
+	flag.StringVar(&nsFg, "nsFg", "", "Nasespace foreground colour")
+	flag.StringVar(&nsBg, "nsBg", "", "Nasespace background colour")
+	flag.StringVar(&separator, "separator", defaultSepalater, "Separator of Context and Nasespace")
+}
+
 func main() {
+	flag.Parse()
+
 	loadingRules := clientcmd.NewDefaultClientConfigLoadingRules()
 	configOverrides := &clientcmd.ConfigOverrides{}
 	kubeConfig := clientcmd.NewNonInteractiveDeferredLoadingClientConfig(loadingRules, configOverrides)
@@ -61,9 +84,54 @@ func main() {
 	}
 	kctx.Namespace = curNs
 
-	format := defaultformat
-	if len(os.Args) > 1 {
-		format = os.Args[1]
+	var format string
+	switch {
+	case flag.CommandLine.NArg() > 1:
+		format = flag.CommandLine.Arg(0)
+	default:
+		// TODO(zchee): refactoring
+		if ctxFg != "" || ctxBg != "" {
+			format = "#["
+		}
+		if ctxFg != "" {
+			format += "fg=" + ctxFg
+		}
+		if ctxBg != "" {
+			format += ",bg=" + ctxBg
+		}
+		if ctxFg != "" || ctxBg != "" {
+			format += "]"
+		}
+		format += defaultContextFormat
+
+		if sepFg != "" || sepBg != "" {
+			format += "#["
+		}
+		if sepFg != "" {
+			format += "fg=" + sepFg
+		}
+		if sepBg != "" {
+			format += ",bg=" + sepBg
+		}
+		if sepFg != "" || sepBg != "" {
+			format += "]"
+		}
+		format += separator
+
+		if nsFg != "" || nsBg != "" {
+			format += "#["
+		}
+		if nsFg != "" {
+			format += "fg=" + nsFg
+		}
+		if nsBg != "" {
+			format += ",bg=" + nsBg
+		}
+		if nsFg != "" || nsBg != "" {
+			format += "]"
+		}
+		format += defaultNamespaceFormat
+		format += "#[fg=default#,bg=default]"
 	}
 
 	if err := printContext(kctx, format); err != nil {

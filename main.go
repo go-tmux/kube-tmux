@@ -34,7 +34,7 @@ func main() {
 		fmt.Fprintln(os.Stdout, "could not get kubeconfig")
 	}
 	if len(config.Contexts) == 0 {
-		fmt.Fprintln(os.Stdout, "kubeconfig is empty context")
+		fmt.Fprintln(os.Stdout, "kubeconfig is empty")
 	}
 
 	curCtx := config.CurrentContext

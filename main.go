@@ -14,8 +14,10 @@ import (
 )
 
 const (
-	defaultSepalater = "/"
-	defaultformat    = "{{.Context}}" + defaultSepalater + "{{.Namespace}}"
+	defaultSepalater       = "/"
+	defaultContextFormat   = "{{.Context}}"
+	defaultNamespaceFormat = "{{.Namespace}}"
+	defaultformat          = defaultContextFormat + defaultSepalater + defaultNamespaceFormat
 )
 
 type kubeContext struct {
@@ -30,26 +32,45 @@ func main() {
 
 	config, err := kubeConfig.RawConfig()
 	if err != nil {
-		fmt.Fprintln(os.Stdout, "could not get kubeconfig")
+		fmt.Fprintln(os.Stdout, "[ERROR] could not get kubeconfig")
+		return
 	}
 	if len(config.Contexts) == 0 {
-		fmt.Fprintln(os.Stdout, "kubeconfig is empty")
+		fmt.Fprintln(os.Stdout, "[ERROR] kubeconfig is empty")
+		return
 	}
 
 	curCtx := config.CurrentContext
+	if curCtx == "" {
+		kctx := kubeContext{
+			Context: "empty",
+		}
+		if err := printContext(kctx, defaultContextFormat); err != nil {
+			fmt.Fprintln(os.Stdout, "[ERROR] could not print kube context")
+		}
+		return
+	}
+
+	kctx := kubeContext{
+		Context: curCtx,
+	}
+
 	curNs := config.Contexts[curCtx].Namespace
 	if curNs == "" {
 		curNs = corev1.NamespaceDefault
 	}
+	kctx.Namespace = curNs
 
 	format := defaultformat
 	if len(os.Args) > 1 {
 		format = os.Args[1]
 	}
 
-	kctx := kubeContext{
-		Context:   curCtx,
-		Namespace: curNs,
+	if err := printContext(kctx, format); err != nil {
+		fmt.Fprintf(os.Stdout, "[ERROR] could not print kube context: %v\n", err)
 	}
-	template.Must(template.New("kube-tmux").Parse(format)).Execute(os.Stdout, kctx)
+}
+
+func printContext(kctx kubeContext, format string) error {
+	return template.Must(template.New("kube-tmux").Parse(format)).Execute(os.Stdout, kctx)
 }

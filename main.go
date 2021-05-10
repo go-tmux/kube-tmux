@@ -41,9 +41,9 @@ func init() {
 	flag.StringVar(&ctxBg, "ctxBg", "", "Context background colour")
 	flag.StringVar(&sepFg, "sepFg", "", "Separator foreground colour")
 	flag.StringVar(&sepBg, "sepBg", "", "Separator background colour")
-	flag.StringVar(&nsFg, "nsFg", "", "Nasespace foreground colour")
-	flag.StringVar(&nsBg, "nsBg", "", "Nasespace background colour")
-	flag.StringVar(&separator, "separator", defaultSepalater, "Separator of Context and Nasespace")
+	flag.StringVar(&nsFg, "nsFg", "", "Namespace foreground colour")
+	flag.StringVar(&nsBg, "nsBg", "", "Namespace background colour")
+	flag.StringVar(&separator, "separator", defaultSepalater, "Separator of Context and Namespace")
 }
 
 func main() {

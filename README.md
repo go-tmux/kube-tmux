@@ -12,15 +12,15 @@ Usage of kube-tmux:
   -ctxFg string
         Context foreground colour
   -nsBg string
-        Nasespace background colour
+        Namespace background colour
   -nsFg string
-        Nasespace foreground colour
+        Namespace foreground colour
   -sepBg string
         Separator background colour
   -sepFg string
         Separator foreground colour
   -separator string
-        Separator of Context and Nasespace (default "/")
+        Separator of Context and Namespace (default "/")
 ```
 
 I’m using the follows:
